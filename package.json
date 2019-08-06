@@ -1,0 +1,25 @@
+{
+  "name": "npm",
+  "version": "1.0.0",
+  "description": "upload files to aliyun oss",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node -r dotenv/config dist/index.js"
+  },
+  "author": "rick yang tongxue",
+  "license": "ISC",
+  "dependencies": {
+    "ali-oss": "^6.1.1",
+    "dotenv": "^8.0.0",
+    "fs-extra": "^8.1.0",
+    "rxjs": "^6.5.2"
+  },
+  "devDependencies": {
+    "@types/ali-oss": "^6.0.4",
+    "@types/fs-extra": "^8.0.0",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
+  }
+}

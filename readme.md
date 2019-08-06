@@ -1,0 +1,9 @@
+upload db backups to aliyun oss
+
+```
+OSS_REGION
+OSS_ACCESS_KEY_ID
+OSS_ACCESS_KEY_SECRET
+OSS_BUCKET
+BACKUP_DIR
+```
