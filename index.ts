@@ -116,34 +116,39 @@ const multipartUpload = (filepath: string, filename?: string) => {
     })),
   );
 };
-from(fs.readdir(BACKUP_DIR))
-  .pipe(
-    tap(filenames => console.log('file count', filenames.length)),
-    switchMap(filenames =>
-      from(filenames).pipe(
-        map(filename => ({
-          filename,
-          filepath: path.join(BACKUP_DIR, filename),
-        })),
+
+const run = () => {
+  from(fs.readdir(BACKUP_DIR))
+    .pipe(
+      tap(filenames => console.log('file count', filenames.length)),
+      switchMap(filenames =>
+        from(filenames).pipe(
+          map(filename => ({
+            filename,
+            filepath: path.join(BACKUP_DIR, filename),
+          })),
+        ),
       ),
-    ),
-    concatMap(({ filepath, filename }) =>
-      multipartUpload(filepath, filename).pipe(
-        switchMap(({ filename, parts, uploadId }) => {
-          console.log(uploadId, parts);
-          return client.completeMultipartUpload(filename, uploadId, parts);
-        }),
-        mapTo(filepath),
+      concatMap(({ filepath, filename }) =>
+        multipartUpload(filepath, filename).pipe(
+          switchMap(({ filename, parts, uploadId }) => {
+            console.log(uploadId, parts);
+            return client.completeMultipartUpload(filename, uploadId, parts);
+          }),
+          mapTo(filepath),
+        ),
       ),
-    ),
-    mergeMap(filepath => from(fs.unlink(filepath)).pipe(mapTo(filepath))),
-    tap(filepath => console.log(path.basename(filepath), 'delete success')),
-  )
-  .subscribe({
-    next: () => {},
-    error: err => {
-      console.log(err.message);
-      recordError(err);
-    },
-    complete: () => console.log('COMPLETE'),
-  });
+      mergeMap(filepath => from(fs.unlink(filepath)).pipe(mapTo(filepath))),
+      tap(filepath => console.log(path.basename(filepath), 'delete success')),
+    )
+    .subscribe({
+      next: () => {},
+      error: err => {
+        console.log(err.message);
+        recordError(err);
+      },
+      complete: () => console.log('COMPLETE'),
+    });
+};
+
+export { run };
