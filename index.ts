@@ -54,8 +54,7 @@ const getBatch = (totalBytes: number, batchSize: number = 2000000) => {
     start: index * batchSize,
     end: (index + 1) * batchSize,
   }));
-  const rest = totalBytes - batchSize * cnt;
-  if (rest > 0) {
+  if (totalBytes % batchSize > 0) {
     arr.push({
       index: cnt,
       start: cnt * batchSize,
@@ -82,6 +81,7 @@ const multipartUpload = (filepath: string, filename?: string) => {
         switchMap(({ bytes, mbSize }) => {
           const batchs = getBatch(bytes);
           console.log(filename, 'total size', bytes, 'batchs', batchs.length);
+          if (batchs.length === 0) return empty();
           return from(batchs);
         }),
         map(item => ({
